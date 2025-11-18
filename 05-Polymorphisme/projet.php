@@ -1,46 +1,51 @@
 <?php
-/**
- * 🎸 PROJET 05 : LE POLYMORPHISME
- * Concept : Polymorphisme (même méthode, comportements différents)
- *
- * 📖 Lis le README.md avant de commencer !
- */
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 1 : Créer la classe parent Instrument
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Instrument' avec :
-// - Propriété protected $nom
-// - Constructeur
-// - Méthode jouer() : "🎵 [nom] joue de la musique..."
+class Instrument {
+    protected $nom;
+
+    public function __construct($nom) {
+        $this->nom = $nom;
+    }
+
+    public function jouer() {
+        echo "🎵 {$this->nom} joue de la musique...<br>";
+    }
+}
+
+class Guitare extends Instrument {
+    public function jouer() {
+        echo "🎸 {$this->nom} : GLING GLING GLING ♪<br>";
+    }
+}
+
+class Piano extends Instrument {
+    public function jouer() {
+        echo "🎹 {$this->nom} : PLONK PLONK PLONK ♫<br>";
+    }
+}
+
+class Batterie extends Instrument {
+    public function jouer() {
+        echo "🥁 {$this->nom} : BOOM BOOM CRASH ♪♫<br>";
+    }
+}
 
 
+$guitare = new Guitare ("fender");
+$guitare->jouer();
+
+$piano = new Piano ("Roland");
+$piano->jouer();
+
+$batterie = new Batterie ("pearl");
+$batterie->jouer();
 
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 2 : Créer la classe Guitare (redéfinir jouer)
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Guitare' qui hérite de Instrument :
-// - REDÉFINIS la méthode jouer() :
-//   "🎸 [nom] : GLING GLING GLING ♪"
-//
-// Indice : On réécrit la même méthode dans l'enfant
-
-
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 3 : Créer les classes Piano et Batterie
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Piano :
-// - Redéfinir jouer() : "🎹 [nom] : PLONK PLONK PLONK ♫"
-//
-// Batterie :
-// - Redéfinir jouer() : "🥁 [nom] : BOOM BOOM CRASH ♪♫"
-
+foreach (['Guitare', 'Piano', 'Batterie'] as $classe) {
+    
+    $instrument = new $classe($classe);
+    $instrument->jouer();
+}
 
 
 

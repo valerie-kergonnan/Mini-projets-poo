@@ -1,0 +1,15 @@
+{
+    "name": "valer/mini-projets-poo",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "VALERIE21625",
+            "email": "valerie.kergonnan@laplateforme.io"
+        }
+    ],
+    "require": {}
+}

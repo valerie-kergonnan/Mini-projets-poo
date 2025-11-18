@@ -1,22 +1,55 @@
 <?php
-/**
- * 🐕 PROJET 04 : L'HÉRITAGE
- * Concept : Héritage (extends) - réutiliser du code
- *
- * 📖 Lis le README.md avant de commencer !
- */
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 1 : Créer la classe PARENT Animal
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Animal' avec :
-// - Propriété PROTECTED $nom  (protected = accessible dans les enfants)
-// - Constructeur qui initialise $nom
-// - Méthode manger() : "🍖 [nom] mange..."
-// - Méthode dormir() : "😴 [nom] dort... Zzz"
-//
-// Indice : protected permet aux classes enfants d'accéder à la propriété
+class Animal {
+    protected $nom;
+
+    public function __construct($nom)
+    {
+        $this->nom = $nom;
+    }
+
+    public function manger() {
+        echo "🍖 {$this->nom} mange...<br>";
+    }
+
+    public function dormir() {
+        echo "😴 {$this->nom} dort... Zzz<br>";
+    }
+}
+
+class Chien extends Animal {
+    public function aboyer() {
+        echo "🐕 {$this->nom} : WOOF WOOF !<br>";
+    }
+}
+
+class Chat extends Animal {
+    public function miauler() {
+        echo "🐈 {$this->nom} : MIAOU !<br>";
+    }
+}
+
+class Oiseau extends Animal {
+    public function voler() {
+        echo "🦅 {$this->nom} vole dans le ciel !<br>";
+    }
+}
+
+$chien = new Chien ("Rex");
+$chien->manger();
+$chien->dormir();
+$chien->aboyer();
+
+$chat = new Chat("Gros Minet");
+$chat->manger();
+$chat->dormir();
+$chat->miauler();
+
+$oiseau = new Oiseau("Titi");
+$oiseau->manger();
+$oiseau->dormir();
+$oiseau->voler();
+
 
 
 

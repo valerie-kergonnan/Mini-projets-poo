@@ -1,136 +1,149 @@
 <?php
-/**
- * 🎮 PROJET 12 : JEU RPG - COMBAT D'ARÈNE
- * Concept : Assembler TOUS les concepts POO dans un mini-jeu
- *
- * 📖 Lis le README.md avant de commencer !
- */
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 1 : Créer le TRAIT Attaquant (compétence commune)
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée un trait 'Attaquant' avec :
-// - Méthode attaquer($cible) qui :
-//   * Inflige $this->attaque points de dégâts à la cible
-//   * Affiche "⚔️ [nom] attaque [cible] et inflige X dégâts !"
-//   * Appelle $cible->recevoirDegats($degats)
-//
-// Indice : $this->attaque sera défini dans la classe qui utilise le trait
+trait Attaquant {
+    public function attaquer($cible) {
+        if (!$this->estVivant) {
+            echo "❌ {$this->nom} ne peut pas attaquer, il est mort.<br>";
+            return;
+        }
+        if (!$cible->getEstVivant()) {
+            echo "⚠️ {$cible->getNom()} est déjà mort !<br>";
+            return;
+        }
+
+        $degats = $this->attaque;
+        echo "⚔️ {$this->nom} attaque {$cible->getNom()} et inflige {$degats} dégâts !<br>";
+        $cible->recevoirDegats($degats);
+    }
+}
+
+abstract class Personnage {
+    protected static $totalPersonnages = 0;
+    protected $nom;
+    protected $vie;
+    protected $attaque;
+    protected $estVivant = true;
+
+    public function __construct($nom, $vie, $attaque) {
+        self::$totalPersonnages++;
+        $this->nom = $nom;
+        $this->vie = $vie;
+        $this->attaque = $attaque;
+        echo "✨ {$this->nom} entre dans l'arène ! (Vie: {$this->vie}, Attaque: {$this->attaque})<br>";
+    }
+
+    public function getNom() {
+        return $this->nom;
+    }
+
+    public function recevoirDegats($degats) {
+        $this->vie -= $degats;
+        if ($this->vie <= 0) {
+            $this->estVivant = false;
+            $this->vie = 0;
+            echo "💀 {$this->nom} est KO !<br>";
+        } else {
+            echo "💔 {$this->nom} a {$this->vie} PV restants<br>";
+        }
+    }
+
+    public function getEstVivant() {
+        return $this->estVivant;
+    }
+
+    public static function getTotalPersonnages() {
+        return self::$totalPersonnages;
+    }
+
+    abstract public function crier();
+}
+
+class Guerrier extends Personnage {
+    use Attaquant;
+
+    public function __construct($nom) {
+        parent::__construct($nom, 100, 20);
+    }
+
+    public function crier() {
+        echo "🗡️ POUR L'HONNEUR !<br>";
+    }
+}
+
+class Mage extends Personnage {
+    use Attaquant;
+
+    public function __construct($nom) {
+        parent::__construct($nom, 70, 35);
+    }
+
+    public function crier() {
+        echo "🔮 PAR LA MAGIE !<br>";
+    }
+
+    public function sortSpecial($cible) {
+        $degats = 50;
+        echo "✨ {$this->nom} lance BOULE DE FEU ! 💥<br>";
+        $cible->recevoirDegats($degats);
+    }
+}
+
+class Archer extends Personnage {
+    use Attaquant;
+
+    public function __construct($nom) {
+        parent::__construct($nom, 80, 25);
+    }
+
+    public function crier() {
+        echo "🏹 TIR MORTEL !<br>";
+    }
+}
+
+class Arene {
+    public function combat($perso1, $perso2) {
+
+        echo "<br><strong>⚔️ COMBAT : {$perso1->getNom()} VS {$perso2->getNom()}</strong><br><br>";
+
+        $round = 1;
+
+        while ($perso1->getEstVivant() && $perso2->getEstVivant()) {
+
+            echo "🌀 <strong>Round $round</strong><br>";
+
+            // PERSO 1 attaque
+            $perso1->attaquer($perso2);
+            if (!$perso2->getEstVivant()) {
+                echo "<br>🏆 {$perso1->getNom()} remporte le combat !<br>";
+                return $perso1;
+            }
+
+            // PERSO 2 attaque
+            $perso2->attaquer($perso1);
+            if (!$perso1->getEstVivant()) {
+                echo "<br>🏆 {$perso2->getNom()} remporte le combat !<br>";
+                return $perso2;
+            }
+
+            $round++;
+            echo "<br>";
+        }
+    }
+}
 
 
+// --------------------
 
+$perso1 = new Guerrier("Conan");
+$perso2 = new Mage("Gandalf");
+$perso3 = new Archer("Legolas");
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 2 : Créer la classe ABSTRAITE Personnage
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe ABSTRAITE 'Personnage' avec :
-// - Propriété STATIC private $totalPersonnages = 0
-// - Propriétés PROTECTED : $nom, $vie, $attaque
-// - Propriété PRIVATE : $estVivant = true
-// - Constructeur qui :
-//   * Incrémente $totalPersonnages
-//   * Initialise nom, vie, attaque
-//   * Affiche "✨ [nom] entre dans l'arène ! (Vie: X, Attaque: Y)"
-// - Méthode recevoirDegats($degats) qui :
-//   * Réduit $vie
-//   * Si vie <= 0 : met $estVivant à false et affiche "💀 [nom] est KO !"
-//   * Sinon : affiche "💔 [nom] a X PV restants"
-// - Méthode getEstVivant() qui retourne $estVivant
-// - Méthode STATIC getTotalPersonnages()
-// - Méthode ABSTRAITE crier() (chaque personnage crie différemment)
+$arene = new Arene();
 
+// Premier combat
+$gagnant1 = $arene->combat($perso1, $perso2);
 
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 3 : Créer la classe Guerrier
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Guerrier' qui :
-// - HÉRITE de Personnage
-// - UTILISE le trait Attaquant
-// - Constructeur : appelle parent avec vie=100, attaque=20
-// - Méthode crier() : "🗡️ POUR L'HONNEUR !"
-
-
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 4 : Créer la classe Mage
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Mage' qui :
-// - HÉRITE de Personnage
-// - UTILISE le trait Attaquant
-// - Constructeur : appelle parent avec vie=70, attaque=35
-// - Méthode crier() : "🔮 PAR LA MAGIE !"
-// - Méthode BONUS sortSpecial($cible) : inflige 50 dégâts fixes
-//   * Affiche "✨ [nom] lance BOULE DE FEU ! 💥"
-
-
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 5 : Créer la classe Archer
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Archer' qui :
-// - HÉRITE de Personnage
-// - UTILISE le trait Attaquant
-// - Constructeur : appelle parent avec vie=80, attaque=25
-// - Méthode crier() : "🏹 TIR MORTEL !"
-
-
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 6 : Créer la classe Arene (le jeu)
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Arene' avec :
-// - Méthode combat($perso1, $perso2) qui :
-//   * Affiche "⚔️ COMBAT : [nom1] VS [nom2]"
-//   * Les deux personnages crient
-//   * Tour par tour jusqu'à ce qu'un personnage soit KO
-//   * Retourne le gagnant
-
-
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 7 : LE GRAND TOURNOI !
-// ─────────────────────────────────────────────────────────────────────────
-//
-// 1. Crée 3 personnages :
-//    - Conan le Guerrier
-//    - Gandalf le Mage
-//    - Legolas l'Archer
-//
-// 2. Crée une Arene
-//
-// 3. Fais combattre :
-//    - Combat 1 : Conan VS Gandalf
-//    - Le mage utilise son sort spécial !
-//    - Combat 2 : Le gagnant VS Legolas
-//
-// 4. Affiche les statistiques :
-//    - Total de personnages créés
-//    - Le CHAMPION final
-
-
-
-
-// ─────────────────────────────────────────────────────────────────────────
-// ✅ BRAVO ! Tu as terminé le Projet 12
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Tu as appris :
-// ✅ Assembler tous les concepts POO dans un projet réel
-// ✅ Traits, héritage, polymorphisme, encapsulation, static
-// ✅ Créer un mini-jeu de combat avec des classes bien structurées
-//
-// 🎯 Prochaine étape : Tu es prêt pour Symfony/Laravel !
-//
-?>
+// Si le gagnant est un mage → sort spécial
+if ($gagnant1 instanceof Mage) {
+    $gagnant1->sortSpecial($perso1);
+}

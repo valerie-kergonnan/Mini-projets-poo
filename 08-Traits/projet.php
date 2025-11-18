@@ -1,55 +1,59 @@
 <?php
-/**
- * 🥷 PROJET 08 : TRAITS
- * Concept : Traits (réutilisation horizontale de code)
- *
- * 📖 Lis le README.md avant de commencer !
- */
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 1 : Créer les traits (compétences)
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée 3 TRAITS :
-//
-// Nageable :
-// - Méthode nager() : "🏊 [nom] nage comme un poisson !"
-//
-// Volant :
-// - Méthode voler() : "🦅 [nom] vole dans les airs !"
-//
-// Invisible :
-// - Méthode seRendreInvisible() : "👻 [nom] devient invisible !"
-//
-// Indice : trait NomTrait { ... }
+trait Nageable {
+    public function nager() {
+        echo "🏊 {$this->nom} nage comme un poisson !<br>";
+    }
+}
+trait Volant {
+    public function voler() {
+        echo "🦅 {$this->nom} vole dans les airs !<br>";
+    }
+}
+trait Invisible {
+    public function seRendreInvisible() {
+        echo "👻 {$this->nom} devient invisible !<br>";
+    }
+}
 
+class Guerrier {
+    use Nageable;
 
+    public $nom;
 
+    public function __construct($nom) {
+        $this->nom = $nom;
+    }
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 2 : Créer la classe Guerrier
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Guerrier' qui :
-// - Utilise le trait Nageable (use Nageable;)
-// - A une propriété public $nom
-// - A un constructeur
-// - A une méthode attaquer() : "⚔️ [nom] attaque avec son épée !"
+    public function attaquer() {
+        echo "⚔️ {$this->nom} attaque avec son épée !<br>";
+    }
+}
 
+class Magicien {
+    use Nageable, Volant, Invisible;
 
+    public $nom;
 
+    public function __construct($nom) {
+        $this->nom = $nom;
+    }
 
-// ─────────────────────────────────────────────────────────────────────────
-// TODO 3 : Créer la classe Magicien
-// ─────────────────────────────────────────────────────────────────────────
-//
-// Crée une classe 'Magicien' qui :
-// - Utilise PLUSIEURS traits : Nageable, Volant, Invisible
-// - A une propriété public $nom
-// - A un constructeur
-// - A une méthode lancerSort() : "🔮 [nom] lance un sort !"
-//
-// Indice : use Nageable, Volant, Invisible;
+    public function lancerSort() {
+        echo "🔮 {$this->nom} lance un sort !<br>";
+    }
+}
+
+$guerrier = new Guerrier("Conan");
+$magicien = new Magicien("Gandalf");
+
+$guerrier->attaquer();
+$guerrier->nager();
+
+$magicien->lancerSort();
+$magicien->voler();
+$magicien->nager();
+$magicien->seRendreInvisible();
 
 
 
